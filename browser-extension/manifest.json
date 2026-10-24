@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "OpenMouse MCP Companion",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Page-level virtual mouse for the OpenMouse MCP server.",
   "permissions": [
     "activeTab",

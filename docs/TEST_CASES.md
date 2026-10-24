@@ -178,7 +178,7 @@ python tests/e2e_stdio.py
 预期：
 
 - 服务名 `openmouse-mcp`。
-- 工具数量 10。
+- 工具数量 11。
 - `mouse_status` 可调用。
 - Agent 断开后 MCP 子进程退出。
 

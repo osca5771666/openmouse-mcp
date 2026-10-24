@@ -132,6 +132,16 @@ Agent 应使用 `viewport_width / image_width` 和 `viewport_height / image_heig
 
 快速打开绝对 HTTP(S) URL。Windows 本地使用 Shell 直接启动默认浏览器，也可以用 `browser="edge"` 或 `browser="chrome"` 指定浏览器，不执行截图、任务栏点击或地址栏自动化。云端模式则导航内嵌 Playwright 浏览器，并默认阻断内网地址。
 
+## app_open
+
+```json
+{
+  "name": "feishu"
+}
+```
+
+快速聚焦已运行的本地应用，或通过可执行文件/开始菜单快捷方式启动。内置别名包括 `feishu`、`notepad`、`explorer`、`cmd`、`powershell`、`calculator`、`edge` 和 `chrome`。
+
 ## mouse_stop
 
 无参数。取消当前动作、清空队列、释放鼠标键，并向浏览器扩展广播停止。

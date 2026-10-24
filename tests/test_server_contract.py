@@ -16,6 +16,7 @@ EXPECTED_TOOLS = {
     "mouse_screenshot",
     "computer_observe",
     "browser_open",
+    "app_open",
     "mouse_stop",
     "mouse_status",
 }

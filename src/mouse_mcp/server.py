@@ -36,6 +36,7 @@ destructive, bulk-submit, or close-all action in vague language.
 For a known URL, use browser_open as the fast path instead of screenshots, taskbar clicks, or
 address-bar automation. On Windows it launches the default browser or Edge/Chrome; in cloud mode
 it navigates the embedded Playwright browser.
+For a known local application, use app_open instead of visually searching the taskbar.
 The server asks the user for MCP elicitation approval before executing detected high-risk actions.
 If approval is unavailable or denied, do not retry around the safety gate. Press ESC or call
 mouse_stop to cancel. Verify meaningful actions with another observation and stop on repeated
@@ -50,7 +51,7 @@ def build_server(runtime: MouseRuntime, settings: Settings) -> MCPServer:
     server = MCPServer(
         name="openmouse-mcp",
         title="OpenMouse MCP",
-        version="1.0.1",
+        version="1.0.2",
         instructions=SERVER_INSTRUCTIONS,
         log_level="WARNING",
     )
@@ -403,6 +404,34 @@ def build_server(runtime: MouseRuntime, settings: Settings) -> MCPServer:
         browser: Literal["default", "edge", "chrome"] = "default",
     ) -> str:
         result = await run_blocking(functools.partial(runtime.open_browser_url, url, browser))
+        return json.dumps(result, ensure_ascii=False)
+
+    @server.tool(
+        name="app_open",
+        title="Open or focus a local application",
+        description=(
+            "Fast path for local applications. Focuses an existing running window, or launches a "
+            "known executable/Start Menu application. Supports aliases such as feishu, notepad, "
+            "explorer, cmd, powershell, calculator, edge, and chrome."
+        ),
+        annotations=ToolAnnotations(
+            readOnlyHint=False,
+            destructiveHint=False,
+            idempotentHint=True,
+            openWorldHint=False,
+        ),
+    )
+    async def app_open(
+        name: Annotated[
+            str,
+            Field(
+                min_length=2,
+                max_length=100,
+                description="Application name or alias, for example 'feishu' or 'notepad'.",
+            ),
+        ],
+    ) -> str:
+        result = await run_blocking(functools.partial(runtime.open_app, name))
         return json.dumps(result, ensure_ascii=False)
 
     @server.tool(

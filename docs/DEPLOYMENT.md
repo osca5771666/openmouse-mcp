@@ -237,6 +237,7 @@ env:     optional MOUSE_MCP_* overrides
 | `MOUSE_MCP_HTTP_TOKEN` | 空 | 云端 Streamable HTTP Bearer Token |
 | `MOUSE_MCP_HTTP_ALLOWED_HOSTS` | 空 | 云端允许的 Host，逗号分隔 |
 | `MOUSE_MCP_CLOUD_ALLOW_PRIVATE_URLS` | `false` | 是否允许云端打开内网 URL |
+| `MOUSE_MCP_SPEED_PROFILE` | `balanced` | `fast`、`balanced` 或 `human`；Codex 插件默认 `fast` |
 
 ## 8. 运行验证
 

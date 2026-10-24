@@ -34,3 +34,21 @@ def test_action_delay_stays_inside_specification() -> None:
 
     assert min(delays) >= 0.2
     assert max(delays) <= 1.3
+
+
+def test_fast_profile_is_shorter_than_balanced() -> None:
+    fast = build_trajectory(
+        Point(0, 0),
+        Point(900, 500),
+        random.Random(42),
+        speed_profile="fast",
+    )
+    balanced = build_trajectory(
+        Point(0, 0),
+        Point(900, 500),
+        random.Random(42),
+        speed_profile="balanced",
+    )
+
+    assert sum(step.delay for step in fast) < sum(step.delay for step in balanced)
+    assert len(fast) < len(balanced)

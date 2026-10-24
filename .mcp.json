@@ -9,6 +9,7 @@
       "env": {
         "MOUSE_MCP_ENV": "auto",
         "MOUSE_MCP_CLOUD_BROWSER": "off",
+        "MOUSE_MCP_SPEED_PROFILE": "fast",
         "PYTHONUNBUFFERED": "1"
       }
     }

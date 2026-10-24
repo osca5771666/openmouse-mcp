@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "openmouse-mcp"
-version = "1.0.1"
+version = "1.0.2"
 description = "Embeddable MCP mouse control for browser pages and the Windows desktop"
 readme = "README.md"
 requires-python = ">=3.10"

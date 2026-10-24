@@ -52,7 +52,7 @@ Agent 执行：
 1. 在 `127.0.0.1:8765` 启动插件内 WebSocket 桥。
 2. 创建串行动作队列。
 3. 在 Windows 上启动 PyAutoGUI 驱动和全局 ESC 监听。
-4. 通过 MCP `stdio` 暴露 10 个工具。
+4. 通过 MCP `stdio` 暴露 11 个工具。
 5. 浏览器扩展主动连接桥，并每秒发送一次心跳。
 
 云端可执行：
@@ -113,6 +113,7 @@ python -m mouse_mcp --transport streamable-http --host 0.0.0.0 --port 8766 --clo
 桌面驱动使用 PyAutoGUI：
 
 - `moveTo` 逐点执行 Python 贝塞尔轨迹，没有坐标瞬移。
+- `fast` 档保留贝塞尔曲线和轻微抖动，但把常见移动压缩到约 `0.1` 到 `0.38` 秒，普通动作间隔为 `0.04` 到 `0.16` 秒。
 - 单击和双击前先完成人类化移动。
 - 拖拽使用 `mouseDown`、轨迹移动和 `finally` 中的 `mouseUp`，保证异常时释放按键。
 - 滚动按每次一个滚轮档位分片执行。

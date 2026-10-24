@@ -41,6 +41,7 @@ class Settings:
     cloud_allow_private_urls: bool = False
     http_auth_token: str | None = None
     http_allowed_hosts: tuple[str, ...] = ()
+    speed_profile: str = "balanced"
     confirm_high_risk: bool = True
     min_action_delay: float = 0.2
     max_action_delay: float = 1.3
@@ -62,6 +63,15 @@ class Settings:
         cloud_mode = os.getenv("MOUSE_MCP_CLOUD_BROWSER", "auto").strip().lower()
         if cloud_mode not in {"auto", "on", "off"}:
             cloud_mode = "auto"
+        speed_profile = os.getenv("MOUSE_MCP_SPEED_PROFILE", "balanced").strip().lower()
+        if speed_profile not in {"fast", "balanced", "human"}:
+            speed_profile = "balanced"
+        delay_defaults = {
+            "fast": (0.04, 0.16),
+            "balanced": (0.2, 1.3),
+            "human": (0.3, 1.5),
+        }
+        default_min_delay, default_max_delay = delay_defaults[speed_profile]
         return cls(
             bridge_host=os.getenv("MOUSE_MCP_BRIDGE_HOST", "127.0.0.1"),
             bridge_port=int(os.getenv("MOUSE_MCP_BRIDGE_PORT", "8765")),
@@ -88,8 +98,13 @@ class Settings:
                 if item.strip()
             ),
             confirm_high_risk=_bool_env("MOUSE_MCP_CONFIRM_HIGH_RISK", True),
-            min_action_delay=float(os.getenv("MOUSE_MCP_MIN_ACTION_DELAY", "0.2")),
-            max_action_delay=float(os.getenv("MOUSE_MCP_MAX_ACTION_DELAY", "1.3")),
+            min_action_delay=float(
+                os.getenv("MOUSE_MCP_MIN_ACTION_DELAY", str(default_min_delay))
+            ),
+            max_action_delay=float(
+                os.getenv("MOUSE_MCP_MAX_ACTION_DELAY", str(default_max_delay))
+            ),
+            speed_profile=speed_profile,
         )
 
     @staticmethod

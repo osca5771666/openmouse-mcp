@@ -46,6 +46,7 @@ def build_trajectory(
     start: Point,
     end: Point,
     rng: random.Random | None = None,
+    speed_profile: str = "balanced",
 ) -> list[TrajectoryStep]:
     """Return a timed cubic-Bezier path with mild jitter and one possible pause."""
     rng = rng or random.Random()
@@ -63,11 +64,38 @@ def build_trajectory(
     p1 = Point(start.x + dx * 0.27 + perp_x * bend_1, start.y + dy * 0.27 + perp_y * bend_1)
     p2 = Point(start.x + dx * 0.73 + perp_x * bend_2, start.y + dy * 0.73 + perp_y * bend_2)
 
-    duration = min(1.1, max(0.24, 0.2 + distance / 1500.0 + rng.uniform(-0.04, 0.08)))
-    steps = max(18, min(72, int(duration * (55 + rng.uniform(-8, 8)))))
+    if speed_profile == "fast":
+        duration = min(
+            0.38,
+            max(0.1, 0.06 + distance / 3200.0 + rng.uniform(-0.01, 0.025)),
+        )
+        steps = max(10, min(36, int(duration * (105 + rng.uniform(-12, 12)))))
+        pause_probability = 0.38
+        pause_min, pause_max = 0.012, 0.045
+        jitter_cap = 0.85
+        jitter_divisor = 1200.0
+    elif speed_profile == "human":
+        duration = min(
+            1.35,
+            max(0.32, 0.24 + distance / 1300.0 + rng.uniform(-0.05, 0.1)),
+        )
+        steps = max(22, min(82, int(duration * (58 + rng.uniform(-8, 8)))))
+        pause_probability = 0.8
+        pause_min, pause_max = 0.05, 0.16
+        jitter_cap = 1.45
+        jitter_divisor = 850.0
+    else:
+        duration = min(1.1, max(0.24, 0.2 + distance / 1500.0 + rng.uniform(-0.04, 0.08)))
+        steps = max(18, min(72, int(duration * (55 + rng.uniform(-8, 8)))))
+        pause_probability = 0.72
+        pause_min, pause_max = 0.035, 0.14
+        jitter_cap = 1.35
+        jitter_divisor = 950.0
     pause_at = rng.randint(max(6, steps // 3), max(7, (steps * 3) // 5))
-    pause_duration = rng.uniform(0.035, 0.14) if rng.random() < 0.72 else 0.0
-    jitter_scale = min(1.35, 0.25 + distance / 950.0)
+    pause_duration = (
+        rng.uniform(pause_min, pause_max) if rng.random() < pause_probability else 0.0
+    )
+    jitter_scale = min(jitter_cap, 0.2 + distance / jitter_divisor)
     phase = rng.uniform(0, math.tau)
 
     points: list[TrajectoryStep] = []

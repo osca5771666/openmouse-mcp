@@ -25,6 +25,8 @@ Then call the discovered tools directly. Read `mouse_status` only when routing i
 
 When the request is simply to open a known website, do not call `computer_observe`, locate a taskbar icon, or click the address bar. Use `browser_open` once with the absolute URL. Pass `browser="edge"` or `browser="chrome"` only when the user named that browser.
 
+When the request is to open a known local application, use `app_open` directly. It focuses an existing window or launches from an alias/Start Menu shortcut without visual taskbar search.
+
 ## Observe First
 
 Call `computer_observe` before any visual action. It returns a PNG plus JSON containing:

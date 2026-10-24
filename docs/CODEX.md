@@ -21,7 +21,7 @@ codex doctor --summary --no-color
 实际新会话已经验证：
 
 1. Codex 启动 OpenMouse MCP。
-2. 握手并读取 10 个工具。
+2. 握手并读取 11 个工具。
 3. Agent 通过 `tool_search` 发现 `openmouse`。
 4. `mouse_status` 返回 `environment=desktop`。
 5. `computer_observe` 返回当前 Windows 截图和任务栏矩形。

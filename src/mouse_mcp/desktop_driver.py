@@ -22,7 +22,11 @@ class DesktopCapture:
 class DesktopDriver:
     """PyAutoGUI-backed Windows desktop driver."""
 
-    def __init__(self, poll_interval: float = 0.02) -> None:
+    def __init__(
+        self,
+        poll_interval: float = 0.02,
+        speed_profile: str = "balanced",
+    ) -> None:
         try:
             import pyautogui
         except Exception as exc:
@@ -32,14 +36,11 @@ class DesktopDriver:
         self._rng = random.Random()
         self._button_lock = threading.Lock()
         self._pressed_button: str | None = None
+        self._speed_profile = speed_profile
         self._size = self._read_size()
 
     def available(self) -> bool:
-        try:
-            self._size = self._read_size()
-            return self._size[0] > 0 and self._size[1] > 0
-        except Exception:
-            return False
+        return self._size[0] > 0 and self._size[1] > 0
 
     def _read_size(self) -> tuple[int, int]:
         size = self._pyautogui.size()
@@ -81,7 +82,10 @@ class DesktopDriver:
             self._validate_target(x, y)
             self.move(x, y, cancel)
         self._check_cancel(cancel)
-        interval = self._rng.uniform(0.08, 0.2)
+        if self._speed_profile == "fast":
+            interval = self._rng.uniform(0.035, 0.09)
+        else:
+            interval = self._rng.uniform(0.08, 0.2)
         self._pyautogui.click(
             button=button,
             clicks=clicks,
@@ -142,7 +146,10 @@ class DesktopDriver:
             self._pyautogui.scroll(chunk, _pause=False)
             remaining -= chunk
             if remaining:
-                self._sleep(self._rng.uniform(0.035, 0.1), cancel)
+                if self._speed_profile == "fast":
+                    self._sleep(self._rng.uniform(0.012, 0.035), cancel)
+                else:
+                    self._sleep(self._rng.uniform(0.035, 0.1), cancel)
         pos_x, pos_y = self._pyautogui.position()
         return {"x": int(pos_x), "y": int(pos_y), "direction": direction, "clicks": clicks}
 
@@ -170,7 +177,12 @@ class DesktopDriver:
         cancel: threading.Event,
         longer_pause: bool = False,
     ) -> None:
-        trajectory = build_trajectory(start, end, self._rng)
+        trajectory = build_trajectory(
+            start,
+            end,
+            self._rng,
+            speed_profile=self._speed_profile,
+        )
         for step in trajectory:
             self._check_cancel(cancel)
             delay = step.delay

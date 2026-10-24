@@ -23,6 +23,7 @@ from .errors import (
     RouteUnavailable,
 )
 from .humanize import random_action_delay
+from .local_apps import open_local_app
 from .local_browser import open_local_url
 from .scheduler import ActionRunner
 
@@ -49,7 +50,10 @@ class MouseRuntime:
             heartbeat_timeout=settings.heartbeat_timeout,
             command_timeout=settings.command_timeout,
         )
-        self.desktop = self._create_desktop_driver(settings.screen_poll_interval)
+        self.desktop = self._create_desktop_driver(
+            settings.screen_poll_interval,
+            settings.speed_profile,
+        )
         self.cloud = self._create_cloud_driver(settings)
         self.router = EnvironmentRouter(
             self.bridge,
@@ -175,6 +179,10 @@ class MouseRuntime:
             self._record_failure(exc)
             raise MouseMcpError(self._failure_text(exc)) from exc
 
+    def open_app(self, name: str) -> dict[str, Any]:
+        result = open_local_app(name)
+        return {**result, "environment": "desktop"}
+
     def emergency_stop(self, reason: str = "emergency_stop") -> None:
         LOGGER.warning("Emergency mouse stop: %s", reason)
         self.runner.emergency_stop(reason)
@@ -224,7 +232,7 @@ class MouseRuntime:
             raise RouteUnavailable(f"Unknown environment: {decision.environment}")
 
         if apply_action_delay:
-            self._action_delay(cancel)
+            self._action_delay(cancel, high_risk=bool(params.get("risk_approved")))
         return {**result, "environment": decision.environment, "route_reason": decision.reason}
 
     def _position_once(
@@ -392,12 +400,15 @@ class MouseRuntime:
             )
         raise MouseMcpError(f"Unsupported cloud mouse action: {action}")
 
-    def _action_delay(self, cancel: threading.Event) -> None:
-        delay = random_action_delay(
-            self.settings.min_action_delay,
-            self.settings.max_action_delay,
-            self._rng,
-        )
+    def _action_delay(self, cancel: threading.Event, high_risk: bool = False) -> None:
+        if self.settings.speed_profile == "fast" and high_risk:
+            delay = random_action_delay(0.16, 0.4, self._rng)
+        else:
+            delay = random_action_delay(
+                self.settings.min_action_delay,
+                self.settings.max_action_delay,
+                self._rng,
+            )
         if cancel.wait(delay):
             raise ActionCancelled("Mouse action cancelled during the humanized pause.")
 
@@ -443,11 +454,17 @@ class MouseRuntime:
         return self.cloud is not None
 
     @staticmethod
-    def _create_desktop_driver(poll_interval: float) -> DesktopDriver | None:
+    def _create_desktop_driver(
+        poll_interval: float,
+        speed_profile: str,
+    ) -> DesktopDriver | None:
         if platform.system().lower() != "windows":
             return None
         try:
-            return DesktopDriver(poll_interval=poll_interval)
+            return DesktopDriver(
+                poll_interval=poll_interval,
+                speed_profile=speed_profile,
+            )
         except Exception:
             LOGGER.exception("Desktop driver initialization failed")
             return None
