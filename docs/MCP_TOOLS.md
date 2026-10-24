@@ -125,11 +125,12 @@ Agent 应使用 `viewport_width / image_width` 和 `viewport_height / image_heig
 
 ```json
 {
-  "url": "https://example.com/"
+  "url": "https://example.com/",
+  "browser": "default"
 }
 ```
 
-在云端 Playwright 浏览器打开绝对 HTTP(S) URL。只有自动路由为 `cloud` 时可用；本地桌面和本地浏览器扩展会拒绝该动作。
+快速打开绝对 HTTP(S) URL。Windows 本地使用 Shell 直接启动默认浏览器，也可以用 `browser="edge"` 或 `browser="chrome"` 指定浏览器，不执行截图、任务栏点击或地址栏自动化。云端模式则导航内嵌 Playwright 浏览器，并默认阻断内网地址。
 
 ## mouse_stop
 

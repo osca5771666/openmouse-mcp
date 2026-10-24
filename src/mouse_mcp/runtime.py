@@ -23,6 +23,7 @@ from .errors import (
     RouteUnavailable,
 )
 from .humanize import random_action_delay
+from .local_browser import open_local_url
 from .scheduler import ActionRunner
 
 
@@ -157,15 +158,14 @@ class MouseRuntime:
             self._record_failure(exc)
             raise MouseMcpError(self._failure_text(exc)) from exc
 
-    def open_browser_url(self, url: str) -> dict[str, Any]:
+    def open_browser_url(self, url: str, browser: str = "default") -> dict[str, Any]:
         decision = self.router.route()
         if decision.environment != "cloud":
-            raise RouteUnavailable(
-                "browser_open is available only when the cloud Playwright browser is the "
-                "active environment. Use the browser extension or its own navigation UI for "
-                "the local attached browser."
-            )
+            result = open_local_url(url, browser)
+            return {**result, "environment": decision.environment, "route_reason": decision.reason}
         try:
+            if self.cloud is None:
+                raise RouteUnavailable("Cloud browser driver is unavailable.")
             result = self.runner.submit(lambda cancel: self.cloud.open_url(url, cancel))
             self._record_success()
             return {**result, "environment": "cloud", "route_reason": decision.reason}

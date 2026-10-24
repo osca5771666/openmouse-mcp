@@ -37,6 +37,9 @@ def test_tool_contract_is_shared_and_context_is_hidden() -> None:
     required = set(click.input_schema.get("required", []))
     assert {"button", "clicks", "intent"} <= required
     assert "target_description" in click.input_schema["properties"]
+    browser_open = next(tool for tool in tools if tool.name == "browser_open")
+    assert "browser" in browser_open.input_schema["properties"]
+    assert browser_open.input_schema["properties"]["browser"]["default"] == "default"
 
 
 def test_server_instructions_fit_openclaw_prompt_cap() -> None:

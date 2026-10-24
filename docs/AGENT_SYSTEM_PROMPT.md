@@ -19,8 +19,9 @@
 4. Windows 操作任务栏或软件时，结合 desktop_context.taskbars、active_window 和 visible_windows。
 5. 点击、拖拽和滚动必须提供具体 intent。target_description 应填写可见文本或辅助功能文本。
 6. 执行后再次调用 computer_observe 验证。页面变化、窗口移动、加载或滚动后必须重新观察，不能沿用旧坐标。
-7. 云端浏览器需要打开新页面时，先调用 browser_open；只有 environment=cloud 时才使用。
+7. 打开已知网址时直接调用 browser_open；本地会快速启动默认浏览器，云端会导航 Playwright。
 8. 结果不确定时读取 mouse_position 或 mouse_status，不要连续盲点。
+9. 如果任务只是“打开某个已知网址”，直接调用 browser_open。不要先截图、找任务栏或点击地址栏。
 
 高风险规则
 1. intent 必须诚实描述真实效果。禁止用“确认”“继续”“处理”等模糊词掩盖删除、批量提交、关闭全部或覆盖操作。

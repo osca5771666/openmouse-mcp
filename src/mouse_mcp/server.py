@@ -33,7 +33,9 @@ Every click, drag, and scroll requires a concrete
 `intent`; `target_description` should quote the visible label when available. Never describe a
 destructive, bulk-submit, or close-all action in vague language.
 
-Use browser_open to navigate the cloud Playwright browser when that environment is active.
+For a known URL, use browser_open as the fast path instead of screenshots, taskbar clicks, or
+address-bar automation. On Windows it launches the default browser or Edge/Chrome; in cloud mode
+it navigates the embedded Playwright browser.
 The server asks the user for MCP elicitation approval before executing detected high-risk actions.
 If approval is unavailable or denied, do not retry around the safety gate. Press ESC or call
 mouse_stop to cancel. Verify meaningful actions with another observation and stop on repeated
@@ -48,7 +50,7 @@ def build_server(runtime: MouseRuntime, settings: Settings) -> MCPServer:
     server = MCPServer(
         name="openmouse-mcp",
         title="OpenMouse MCP",
-        version="1.0.0",
+        version="1.0.1",
         instructions=SERVER_INSTRUCTIONS,
         log_level="WARNING",
     )
@@ -375,12 +377,12 @@ def build_server(runtime: MouseRuntime, settings: Settings) -> MCPServer:
 
     @server.tool(
         name="browser_open",
-        title="Open a URL in the cloud browser",
+        title="Open a URL directly in a browser",
         description=(
-            "Navigate the embedded cloud Playwright Chromium browser to an http:// or https:// "
-            "URL. This tool is only valid when the automatic route is cloud. It does not open "
-            "URLs in the local desktop browser extension. Private and loopback addresses are "
-            "blocked by default."
+            "Fast path for opening a known http:// or https:// URL. On Windows this launches the "
+            "default browser, Edge, or Chrome directly without screenshots or mouse movement. In "
+            "cloud mode it navigates the embedded Playwright browser and blocks private addresses "
+            "by default."
         ),
         annotations=ToolAnnotations(
             readOnlyHint=False,
@@ -398,8 +400,9 @@ def build_server(runtime: MouseRuntime, settings: Settings) -> MCPServer:
                 description="Absolute http:// or https:// URL.",
             ),
         ],
+        browser: Literal["default", "edge", "chrome"] = "default",
     ) -> str:
-        result = await run_blocking(functools.partial(runtime.open_browser_url, url))
+        result = await run_blocking(functools.partial(runtime.open_browser_url, url, browser))
         return json.dumps(result, ensure_ascii=False)
 
     @server.tool(

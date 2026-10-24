@@ -65,7 +65,7 @@ const connect = async () => {
       type: "hello",
       token,
       client_id: `chromium-${crypto.randomUUID()}`,
-      version: "1.0.0",
+      version: "1.0.1",
       user_agent: navigator.userAgent,
     });
   });

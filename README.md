@@ -19,7 +19,7 @@
 | `mouse_position` | 读取当前虚拟光标或真实光标坐标 |
 | `mouse_screenshot` | 浏览器当前标签页或 Windows 全屏截图 |
 | `computer_observe` | 全屏截图 + 任务栏、窗口、显示器、浏览器视口等视觉元数据 |
-| `browser_open` | 在云端 Playwright 浏览器打开 HTTP(S) 页面 |
+| `browser_open` | 快速打开本地默认浏览器/Edge/Chrome，或导航云端 Playwright 页面 |
 | `mouse_stop` | 紧急停止、释放按键、清空动作队列 |
 | `mouse_status` | 查看自动路由、扩展心跳和失败状态 |
 
@@ -92,7 +92,7 @@ powershell -ExecutionPolicy Bypass -File .\scripts\install.ps1
 
 ## 已验证
 
-- Python 单元测试：32 项通过。
+- Python 单元测试：35 项通过。
 - Node 人类化轨迹测试：3 项通过。
 - Chromium 真实扩展 E2E：单击、双击、拖拽选择、滚动、截图、高风险拦截通过。
 - MCP `stdio` E2E：初始化、10 个工具发现、桌面观察和截图通过。

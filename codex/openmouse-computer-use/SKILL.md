@@ -21,6 +21,10 @@ openmouse computer_observe mouse_status
 
 Then call the discovered tools directly. Read `mouse_status` only when routing is unclear.
 
+## Fast Path For URLs
+
+When the request is simply to open a known website, do not call `computer_observe`, locate a taskbar icon, or click the address bar. Use `browser_open` once with the absolute URL. Pass `browser="edge"` or `browser="chrome"` only when the user named that browser.
+
 ## Observe First
 
 Call `computer_observe` before any visual action. It returns a PNG plus JSON containing:
