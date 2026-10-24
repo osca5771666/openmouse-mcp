@@ -1,0 +1,413 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>OpenMouse browser test surface</title>
+    <style>
+      :root {
+        color-scheme: light;
+        font-family: "Segoe UI", system-ui, sans-serif;
+        background: #eef1f4;
+        color: #17202a;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-width: 320px;
+      }
+
+      main {
+        width: min(1180px, calc(100% - 40px));
+        margin: 28px auto 96px;
+      }
+
+      header {
+        display: flex;
+        justify-content: space-between;
+        align-items: end;
+        gap: 24px;
+        padding-bottom: 18px;
+        border-bottom: 1px solid #cbd2da;
+      }
+
+      h1 {
+        margin: 0;
+        font-size: 28px;
+        letter-spacing: 0;
+      }
+
+      header p {
+        max-width: 470px;
+        margin: 0;
+        color: #5d6875;
+        line-height: 1.5;
+      }
+
+      .workspace {
+        display: grid;
+        grid-template-columns: minmax(0, 1.4fr) minmax(280px, 0.6fr);
+        gap: 20px;
+        margin-top: 24px;
+      }
+
+      section {
+        border: 1px solid #cbd2da;
+        background: #fbfcfd;
+        border-radius: 8px;
+        padding: 20px;
+      }
+
+      h2 {
+        margin: 0 0 14px;
+        font-size: 18px;
+      }
+
+      p {
+        line-height: 1.6;
+      }
+
+      .toolbar {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-bottom: 16px;
+      }
+
+      button {
+        min-height: 40px;
+        padding: 9px 15px;
+        border: 1px solid #1f4c6b;
+        border-radius: 6px;
+        background: #215b80;
+        color: #ffffff;
+        font: inherit;
+        cursor: pointer;
+      }
+
+      button.secondary {
+        border-color: #9da8b4;
+        background: #ffffff;
+        color: #25313d;
+      }
+
+      button.danger {
+        border-color: #9d2f24;
+        background: #b53b2e;
+      }
+
+      .note {
+        min-height: 210px;
+        padding: 18px;
+        border: 1px solid #d6dce3;
+        border-radius: 6px;
+        background: #ffffff;
+        line-height: 1.75;
+      }
+
+      .stats {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
+        margin-top: 16px;
+      }
+
+      .stat {
+        padding: 12px;
+        border: 1px solid #d6dce3;
+        border-radius: 6px;
+        background: #f5f7f9;
+      }
+
+      .stat strong {
+        display: block;
+        margin-top: 4px;
+        font-size: 22px;
+      }
+
+      canvas {
+        display: block;
+        width: 100%;
+        height: 220px;
+        border: 1px solid #d6dce3;
+        border-radius: 6px;
+        background: #f7f4ec;
+      }
+
+      .canvas-readout {
+        margin-top: 10px;
+        color: #5d6875;
+      }
+
+      .scroll-region {
+        height: 240px;
+        overflow: auto;
+        margin-top: 22px;
+        padding-right: 8px;
+      }
+
+      .scroll-region article {
+        padding: 16px 0;
+        border-bottom: 1px solid #dde2e7;
+      }
+
+      .toast {
+        position: fixed;
+        right: 24px;
+        bottom: 24px;
+        max-width: 360px;
+        padding: 13px 16px;
+        border-radius: 6px;
+        background: #173f35;
+        color: #ffffff;
+        opacity: 0;
+        transform: translateY(8px);
+        transition:
+          opacity 140ms ease,
+          transform 140ms ease;
+        pointer-events: none;
+      }
+
+      .toast.visible {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      @media (max-width: 820px) {
+        header,
+        .workspace {
+          display: block;
+        }
+
+        header p {
+          margin-top: 10px;
+        }
+
+        section + section {
+          margin-top: 20px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <header>
+        <div>
+          <h1>OpenMouse test surface</h1>
+          <p id="page-summary">
+            A local practice page for screenshot targeting, clicking, dragging,
+            scrolling, and the high-risk confirmation gate.
+          </p>
+        </div>
+        <p>Viewport: <strong id="viewport-label"></strong></p>
+      </header>
+
+      <div class="workspace">
+        <section aria-labelledby="editor-title">
+          <h2 id="editor-title">Editor</h2>
+          <div class="toolbar">
+            <button id="save-note" type="button">Save note</button>
+            <button id="load-sample" class="secondary" type="button">
+              Load sample
+            </button>
+            <button
+              id="delete-all"
+              class="danger"
+              type="button"
+              data-openmouse-risk="high"
+            >
+              Delete all records
+            </button>
+          </div>
+          <div id="note" class="note" tabindex="0">
+            Select part of this sentence by dragging from the first word to the
+            last word. The page records pointer, mouse, and selection events so
+            the Agent can verify a browser drag.
+          </div>
+          <div class="stats">
+            <div class="stat">Save count <strong id="save-count">0</strong></div>
+            <div class="stat">
+              Last pointer action <strong id="last-action">none</strong>
+            </div>
+          </div>
+
+          <div class="scroll-region" id="scroll-region" tabindex="0">
+            <article>
+              <h3>Section 01</h3>
+              <p>
+                The scrollable panel provides a fixed target for wheel tests.
+                Each section has enough height to require several mouse-wheel
+                notches.
+              </p>
+            </article>
+            <article>
+              <h3>Section 02</h3>
+              <p>
+                Scroll progress is visible below the canvas. Wheel events and
+                native scroll changes are both reported.
+              </p>
+            </article>
+            <article>
+              <h3>Section 03</h3>
+              <p>
+                Continue until the target section is visible, then capture a
+                fresh screenshot before clicking.
+              </p>
+            </article>
+            <article>
+              <h3>Section 04</h3>
+              <p>
+                This final paragraph is intentionally far from the initial
+                viewport.
+              </p>
+            </article>
+          </div>
+        </section>
+
+        <section aria-labelledby="canvas-title">
+          <h2 id="canvas-title">Canvas target</h2>
+          <canvas id="target-canvas" width="720" height="440"></canvas>
+          <p class="canvas-readout" id="canvas-readout">
+            Click the orange circle to register a canvas hit.
+          </p>
+          <p>Scroll position: <strong id="scroll-label">0</strong></p>
+          <p>Selection length: <strong id="selection-label">0</strong></p>
+        </section>
+      </div>
+    </main>
+    <div class="toast" id="toast" role="status"></div>
+
+    <script>
+      const saveCount = document.getElementById("save-count");
+      const lastAction = document.getElementById("last-action");
+      const scrollLabel = document.getElementById("scroll-label");
+      const selectionLabel = document.getElementById("selection-label");
+      const toast = document.getElementById("toast");
+      const canvas = document.getElementById("target-canvas");
+      const context = canvas.getContext("2d");
+      const canvasPoint = { x: 510, y: 225, radius: 54 };
+      let saves = 0;
+
+      const showToast = (text) => {
+        toast.textContent = text;
+        toast.classList.add("visible");
+        window.clearTimeout(showToast.timer);
+        showToast.timer = window.setTimeout(
+          () => toast.classList.remove("visible"),
+          1600,
+        );
+      };
+
+      const drawCanvas = () => {
+        context.clearRect(0, 0, canvas.width, canvas.height);
+        context.fillStyle = "#e4ded0";
+        context.fillRect(0, 0, canvas.width, canvas.height);
+        context.strokeStyle = "#bdb5a6";
+        context.lineWidth = 2;
+        for (let x = 0; x < canvas.width; x += 48) {
+          context.beginPath();
+          context.moveTo(x, 0);
+          context.lineTo(x, canvas.height);
+          context.stroke();
+        }
+        for (let y = 0; y < canvas.height; y += 48) {
+          context.beginPath();
+          context.moveTo(0, y);
+          context.lineTo(canvas.width, y);
+          context.stroke();
+        }
+        context.beginPath();
+        context.arc(
+          canvasPoint.x,
+          canvasPoint.y,
+          canvasPoint.radius,
+          0,
+          Math.PI * 2,
+        );
+        context.fillStyle = "#d9683b";
+        context.fill();
+        context.strokeStyle = "#8f3d20";
+        context.lineWidth = 4;
+        context.stroke();
+        context.fillStyle = "#ffffff";
+        context.font = "600 24px Segoe UI";
+        context.textAlign = "center";
+        context.textBaseline = "middle";
+        context.fillText("Click", canvasPoint.x, canvasPoint.y);
+      };
+      drawCanvas();
+
+      const updateViewport = () => {
+        document.getElementById("viewport-label").textContent =
+          `${window.innerWidth} x ${window.innerHeight} @ ${window.devicePixelRatio}x`;
+      };
+      updateViewport();
+      window.addEventListener("resize", updateViewport);
+
+      document.getElementById("save-note").addEventListener("click", () => {
+        saves += 1;
+        saveCount.textContent = String(saves);
+        lastAction.textContent = "save";
+        showToast("Note saved");
+      });
+
+      document.getElementById("load-sample").addEventListener("click", () => {
+        document.getElementById("note").textContent =
+          "Sample note loaded by the browser virtual mouse. " +
+          "This text can be dragged and selected.";
+        lastAction.textContent = "load";
+        showToast("Sample loaded");
+      });
+
+      document.getElementById("delete-all").addEventListener("click", () => {
+        lastAction.textContent = "delete-all";
+        showToast("Delete action reached the page");
+      });
+
+      canvas.addEventListener("click", (event) => {
+        const bounds = canvas.getBoundingClientRect();
+        const x = ((event.clientX - bounds.left) * canvas.width) / bounds.width;
+        const y = ((event.clientY - bounds.top) * canvas.height) / bounds.height;
+        const hit =
+          Math.hypot(x - canvasPoint.x, y - canvasPoint.y) <=
+          canvasPoint.radius;
+        lastAction.textContent = hit ? "canvas-hit" : "canvas-miss";
+        showToast(hit ? "Canvas target clicked" : "Canvas background clicked");
+      });
+
+      const updateSelection = () => {
+        selectionLabel.textContent = String(
+          window.getSelection()?.toString().length || 0,
+        );
+      };
+      document.addEventListener("selectionchange", updateSelection);
+
+      const scrollRegion = document.getElementById("scroll-region");
+      const updateScroll = () => {
+        scrollLabel.textContent = String(Math.round(scrollRegion.scrollTop));
+      };
+      scrollRegion.addEventListener("scroll", updateScroll);
+      scrollRegion.addEventListener(
+        "wheel",
+        () => {
+          lastAction.textContent = "wheel";
+        },
+        { passive: true },
+      );
+
+      document.addEventListener(
+        "pointerdown",
+        () => {
+          if (lastAction.textContent === "none") {
+            lastAction.textContent = "pointer-down";
+          }
+        },
+        true,
+      );
+    </script>
+  </body>
+</html>

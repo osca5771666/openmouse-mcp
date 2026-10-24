@@ -1,0 +1,16 @@
+{
+  "mcpServers": {
+    "openmouse": {
+      "command": "python",
+      "args": [
+        "-u",
+        "./bin/openmouse-mcp-launcher.py"
+      ],
+      "env": {
+        "MOUSE_MCP_ENV": "auto",
+        "MOUSE_MCP_CLOUD_BROWSER": "off",
+        "PYTHONUNBUFFERED": "1"
+      }
+    }
+  }
+}

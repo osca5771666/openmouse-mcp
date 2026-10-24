@@ -1,0 +1,44 @@
+{
+  "name": "openmouse",
+  "version": "1.0.0",
+  "description": "Visual mouse and computer-use tools for the Windows desktop, local Chromium, and an embedded cloud browser.",
+  "author": {
+    "name": "osca5771666",
+    "url": "https://github.com/osca5771666"
+  },
+  "homepage": "https://github.com/osca5771666/openmouse-mcp",
+  "repository": "https://github.com/osca5771666/openmouse-mcp",
+  "license": "MIT",
+  "keywords": [
+    "computer-use",
+    "mouse",
+    "windows",
+    "playwright",
+    "mcp",
+    "desktop-automation"
+  ],
+  "skills": "./codex/",
+  "mcpServers": "./.mcp.json",
+  "interface": {
+    "displayName": "OpenMouse",
+    "shortDescription": "Visual mouse control for desktop and cloud browsers",
+    "longDescription": "Observe screens, operate the real Windows mouse and taskbar, control local Chromium pages, and run an isolated Playwright browser in the cloud through one MCP interface.",
+    "developerName": "osca5771666",
+    "category": "Developer Tools",
+    "capabilities": [
+      "Computer use",
+      "Local automation",
+      "Cloud browser",
+      "Read",
+      "Write"
+    ],
+    "websiteURL": "https://github.com/osca5771666/openmouse-mcp",
+    "defaultPrompt": [
+      "Use OpenMouse to observe my screen and operate the requested desktop or browser target."
+    ],
+    "brandColor": "#0F766E",
+    "composerIcon": "./assets/openmouse-icon.svg",
+    "logo": "./assets/openmouse-logo.png",
+    "screenshots": []
+  }
+}

@@ -1,0 +1,51 @@
+[build-system]
+requires = ["setuptools>=61", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "openmouse-mcp"
+version = "1.0.0"
+description = "Embeddable MCP mouse control for browser pages and the Windows desktop"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [{ name = "OpenMouse MCP" }]
+dependencies = [
+  "mcp>=2.3.0,<3",
+  "websockets>=15.0.1,<16",
+  "psutil>=6.1.0",
+  "Pillow>=10.0.0",
+  "pyautogui>=0.9.54; sys_platform == 'win32'",
+  "pynput>=1.7.7; sys_platform == 'win32'",
+]
+
+[project.optional-dependencies]
+dev = [
+  "pytest>=8.0",
+  "ruff>=0.8",
+]
+e2e = [
+  "playwright>=1.61.0",
+]
+cloud = [
+  "playwright>=1.61.0",
+  "uvicorn>=0.30",
+]
+
+[project.scripts]
+openmouse-mcp = "mouse_mcp.__main__:main"
+
+[tool.setuptools]
+package-dir = { "" = "src" }
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+addopts = "-q"
+testpaths = ["tests"]
+pythonpath = ["src"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"

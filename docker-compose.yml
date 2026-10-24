@@ -1,0 +1,13 @@
+services:
+  openmouse-mcp:
+    build: .
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:8766:8766"
+    environment:
+      MOUSE_MCP_HTTP_TOKEN: "${MOUSE_MCP_HTTP_TOKEN:?Set MOUSE_MCP_HTTP_TOKEN}"
+      MOUSE_MCP_HTTP_ALLOWED_HOSTS: "${MOUSE_MCP_HTTP_ALLOWED_HOSTS:-localhost,127.0.0.1}"
+      MOUSE_MCP_CLOUD_HEADLESS: "1"
+    shm_size: "1gb"
+    security_opt:
+      - seccomp=unconfined

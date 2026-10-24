@@ -1,0 +1,14 @@
+interface:
+  display_name: "OpenMouse Computer Use"
+  short_description: "Control Windows desktop and cloud browsers visually"
+  default_prompt: "Use $openmouse-computer-use to observe my screen and complete the next safe mouse action."
+
+dependencies:
+  tools:
+    - type: "mcp"
+      value: "openmouse"
+      description: "OpenMouse local desktop and cloud browser control server"
+      transport: "stdio"
+
+policy:
+  allow_implicit_invocation: true

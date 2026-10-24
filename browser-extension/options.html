@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>OpenMouse MCP Companion</title>
+    <link rel="stylesheet" href="options.css" />
+  </head>
+  <body>
+    <main>
+      <header>
+        <h1>OpenMouse MCP Companion</h1>
+        <p>
+          Connect this extension to the loopback bridge started by the Agent's
+          OpenMouse MCP process.
+        </p>
+      </header>
+      <form id="settings-form">
+        <label>
+          Bridge URL
+          <input id="server-url" name="serverUrl" type="url" required />
+        </label>
+        <label>
+          Shared token
+          <input id="token" name="token" type="password" required />
+        </label>
+        <div class="actions">
+          <button type="submit">Save and reconnect</button>
+          <button id="show-token" type="button">Show token</button>
+        </div>
+        <p id="status" role="status"></p>
+      </form>
+      <section>
+        <h2>Operation</h2>
+        <p>
+          The badge shows ON while the bridge is connected. Press Escape in a
+          controlled page to cancel page movement. Browser actions use synthetic
+          DOM events and do not move the operating-system pointer.
+        </p>
+      </section>
+    </main>
+    <script src="options.js"></script>
+  </body>
+</html>

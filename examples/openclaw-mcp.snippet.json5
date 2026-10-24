@@ -1,0 +1,13 @@
+{
+  mcp: {
+    servers: {
+      "openmouse-mcp": {
+        command: "C:\\absolute\\path\\to\\openmouse-mcp\\.venv\\Scripts\\python.exe",
+        args: ["-m", "mouse_mcp"],
+        cwd: "C:\\absolute\\path\\to\\openmouse-mcp",
+        transport: "stdio",
+        enabled: true,
+      },
+    },
+  },
+}

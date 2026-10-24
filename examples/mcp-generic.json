@@ -1,0 +1,17 @@
+{
+  "mcpServers": {
+    "openmouse-mcp": {
+      "command": "C:\\absolute\\path\\to\\openmouse-mcp\\.venv\\Scripts\\python.exe",
+      "args": [
+        "-m",
+        "mouse_mcp"
+      ],
+      "cwd": "C:\\absolute\\path\\to\\openmouse-mcp",
+      "env": {
+        "MOUSE_MCP_ENV": "auto",
+        "MOUSE_MCP_BRIDGE_HOST": "127.0.0.1",
+        "MOUSE_MCP_BRIDGE_PORT": "8765"
+      }
+    }
+  }
+}

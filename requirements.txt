@@ -1,0 +1,6 @@
+mcp>=2.3.0,<3
+websockets>=15.0.1,<16
+psutil>=6.1.0
+Pillow>=10.0.0
+pyautogui>=0.9.54; sys_platform == "win32"
+pynput>=1.7.7; sys_platform == "win32"
